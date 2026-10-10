@@ -26,7 +26,7 @@ return [
         'lonte',
         'mampus', 'memek', 'monyet',
         'ngentot',
-        'pantek', 'pecun', 'perek', 'puqi',
+        'pantek', 'pecun', 'perek', 'puki', 'puqi', 'pukimak', 'puqimak',
         'setan', 'sialan', 'sinting',
         'tai', 'taik', 'tempek', 'tuempekk', 'tempekkkk', 'tolol',
         'titit', 'yatim',
