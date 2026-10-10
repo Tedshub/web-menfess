@@ -6,30 +6,81 @@ export default function Navbar({
     totalSemuaPesan = null,
     sidebarTerbuka = false,
     onToggleSidebar = null,
+    isFullscreen: isFullscreenProp = null,
     onToggleFullscreen = null,
 }) {
     const { url } = usePage();
     const isKirim = url === '/' || url === '';
     const isDisplay = url.startsWith('/display');
 
-    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [localIsFullscreen, setLocalIsFullscreen] = useState(false);
+    const activeIsFullscreen = isFullscreenProp !== null ? isFullscreenProp : localIsFullscreen;
 
     useEffect(() => {
         function handleFsChange() {
-            setIsFullscreen(!!document.fullscreenElement);
+            const isFs = !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement ||
+                (window.innerHeight === screen.height && window.innerWidth === screen.width)
+            );
+            setLocalIsFullscreen(isFs);
         }
+
         document.addEventListener('fullscreenchange', handleFsChange);
-        return () => document.removeEventListener('fullscreenchange', handleFsChange);
+        document.addEventListener('webkitfullscreenchange', handleFsChange);
+        document.addEventListener('mozfullscreenchange', handleFsChange);
+        document.addEventListener('MSFullscreenChange', handleFsChange);
+        window.addEventListener('resize', handleFsChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFsChange);
+            document.removeEventListener('webkitfullscreenchange', handleFsChange);
+            document.removeEventListener('mozfullscreenchange', handleFsChange);
+            document.removeEventListener('MSFullscreenChange', handleFsChange);
+            window.removeEventListener('resize', handleFsChange);
+        };
     }, []);
 
     function toggleFullscreen() {
         if (onToggleFullscreen) {
             onToggleFullscreen();
+            return;
+        }
+
+        const doc = document;
+        const docEl = document.documentElement;
+        const isFs = !!(
+            doc.fullscreenElement ||
+            doc.webkitFullscreenElement ||
+            doc.mozFullScreenElement ||
+            doc.msFullscreenElement
+        );
+
+        if (!isFs) {
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen().catch((err) => {
+                    console.error('Gagal masuk Fullscreen:', err);
+                });
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            } else if (docEl.mozRequestFullScreen) {
+                docEl.mozRequestFullScreen();
+            } else if (docEl.msRequestFullscreen) {
+                docEl.msRequestFullscreen();
+            }
         } else {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else {
-                document.exitFullscreen().catch(() => {});
+            if (doc.exitFullscreen) {
+                doc.exitFullscreen().catch((err) => {
+                    console.error('Gagal keluar Fullscreen:', err);
+                });
+            } else if (doc.webkitExitFullscreen) {
+                doc.webkitExitFullscreen();
+            } else if (doc.mozCancelFullScreen) {
+                doc.mozCancelFullScreen();
+            } else if (doc.msExitFullscreen) {
+                doc.msExitFullscreen();
             }
         }
     }
@@ -124,10 +175,10 @@ export default function Navbar({
                         type="button"
                         onClick={toggleFullscreen}
                         className="navbar-btn-fs"
-                        title={isFullscreen ? 'Keluar Fullscreen' : 'Layar Penuh (Proyektor)'}
+                        title={activeIsFullscreen ? 'Keluar Fullscreen' : 'Layar Penuh (Proyektor)'}
                         aria-label="Toggle Fullscreen"
                     >
-                        {isFullscreen ? (
+                        {activeIsFullscreen ? (
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -137,7 +188,7 @@ export default function Navbar({
                             </svg>
                         )}
                         <span className="navbar-btn-fs-label">
-                            {isFullscreen ? 'Kecilkan' : 'Layar Penuh'}
+                            {activeIsFullscreen ? 'Kecilkan' : 'Layar Penuh'}
                         </span>
                     </button>
                 </div>

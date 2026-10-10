@@ -7,7 +7,9 @@ use Illuminate\Console\Command;
 
 class IsiContohPesan extends Command
 {
-    protected $signature = 'pesan:isi-contoh {jumlah=20 : Jumlah pesan contoh yang akan dibuat}';
+    protected $signature = 'pesan:isi-contoh 
+                            {jumlah=20 : Jumlah pesan contoh yang akan dibuat} 
+                            {--delay=0 : Jeda dalam detik antar pesan untuk simulasi tampilan realtime (misal: --delay=2)}';
 
     protected $description = 'Buat pesan contoh untuk menguji tampilan Display';
 
@@ -49,29 +51,58 @@ class IsiContohPesan extends Command
     public function handle(): int
     {
         $jumlah = (int) $this->argument('jumlah');
+        $delay = (int) $this->option('delay');
 
         if ($jumlah < 1 || $jumlah > 1000) {
             $this->error('Jumlah harus antara 1 dan 1000.');
+
             return self::FAILURE;
         }
 
-        $this->info("Membuat {$jumlah} pesan contoh...");
+        if ($delay > 0) {
+            $this->info("Memulai simulasi live: membuat {$jumlah} pesan dengan jeda {$delay} detik...");
+            $this->comment('Buka http://localhost:8000/display di browsermu untuk melihat pesan masuk secara live!');
+            $this->newLine();
 
-        $bar = $this->output->createProgressBar($jumlah);
-        $bar->start();
+            for ($i = 0; $i < $jumlah; $i++) {
+                if ($i > 0) {
+                    sleep($delay);
+                }
 
-        for ($i = 0; $i < $jumlah; $i++) {
-            Pesan::create([
-                'nama'            => $this->namaContoh[array_rand($this->namaContoh)],
-                'isi_pesan'       => $this->pesanContoh[array_rand($this->pesanContoh)],
-                'disetujui'       => true,
-                'sidik_perangkat' => hash('sha256', 'contoh-' . $i),
-                'created_at'      => now()->subSeconds($jumlah - $i),
-            ]);
-            $bar->advance();
+                $nama = $this->namaContoh[array_rand($this->namaContoh)];
+                $pesanTeks = $this->pesanContoh[array_rand($this->pesanContoh)];
+
+                $pesan = Pesan::create([
+                    'nama' => $nama,
+                    'isi_pesan' => $pesanTeks,
+                    'disetujui' => true,
+                    'sidik_perangkat' => hash('sha256', 'contoh-'.uniqid()),
+                    'created_at' => now(),
+                ]);
+
+                $nomor = $i + 1;
+                $this->line("<info>[{$nomor}/{$jumlah}]</info> <comment>{$nama}:</comment> \"{$pesanTeks}\"");
+            }
+        } else {
+            $this->info("Membuat {$jumlah} pesan contoh sekaligus...");
+            $bar = $this->output->createProgressBar($jumlah);
+            $bar->start();
+
+            for ($i = 0; $i < $jumlah; $i++) {
+                Pesan::create([
+                    'nama' => $this->namaContoh[array_rand($this->namaContoh)],
+                    'isi_pesan' => $this->pesanContoh[array_rand($this->pesanContoh)],
+                    'disetujui' => true,
+                    'sidik_perangkat' => hash('sha256', 'contoh-'.$i),
+                    'created_at' => now()->subSeconds($jumlah - $i),
+                ]);
+                $bar->advance();
+            }
+
+            $bar->finish();
+            $this->newLine();
         }
 
-        $bar->finish();
         $this->newLine();
         $this->info("{$jumlah} pesan contoh berhasil dibuat!");
 

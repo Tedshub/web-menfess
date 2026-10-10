@@ -16,20 +16,49 @@ function formatWaktu(waktuStr) {
     }
 }
 
+// ─── Penentuan Ukuran Font Dinamis Berdasarkan Panjang Teks & Jumlah Kata ───────
+function tentukanKelasFontPesan(teks, isSpan2) {
+    const str = (teks || '').trim();
+    const len = str.length;
+    const words = str ? str.split(/\s+/).filter(Boolean).length : 0;
+
+    if (isSpan2) {
+        // Kartu Lebar (Span 2): Rentang Font 1.02rem (Min) hingga 3.25rem (Max)
+        if (len <= 25 && words <= 4) return 'kartu-isi-sangat-singkat'; // Batas Maksimal (Besar)
+        if (len <= 55 && words <= 9) return 'kartu-isi-singkat';
+        if (len <= 95 && words <= 16) return 'kartu-isi-sedang';
+        if (len <= 145 && words <= 25) return 'kartu-isi-panjang';
+        return 'kartu-isi-sangat-panjang'; // Batas Minimal (Kecil)
+    } else {
+        // Kartu Standar (Span 1): Rentang Font 0.92rem (Min) hingga 2.5rem (Max)
+        if (len <= 20 && words <= 3) return 'kartu-isi-sangat-singkat'; // Batas Maksimal (Besar)
+        if (len <= 45 && words <= 7) return 'kartu-isi-singkat';
+        if (len <= 80 && words <= 14) return 'kartu-isi-sedang';
+        if (len <= 130 && words <= 22) return 'kartu-isi-panjang';
+        return 'kartu-isi-sangat-panjang'; // Batas Minimal (Kecil)
+    }
+}
+
+function tentukanKelasFontNama(nama, isSpan2) {
+    const len = (nama || '').trim().length;
+    if (isSpan2) {
+        if (len <= 16) return 'kartu-nama-lg';
+        if (len <= 26) return 'kartu-nama-md';
+        return 'kartu-nama-sm';
+    } else {
+        if (len <= 14) return 'kartu-nama-md';
+        return 'kartu-nama-sm';
+    }
+}
+
 // ─── Komponen Kartu Putih Modern ──────────────────────────────────────────────
 function KartuPesanModern({ kartu, isCompact }) {
     const { pesan, posisi, warna } = kartu;
     const teks = pesan.isi_pesan || '';
-    const panjang = teks.length;
     const isSpan2 = posisi.lebar === 2;
 
-    const kelasFontNama = isSpan2
-        ? panjang < 60 ? 'kartu-nama-lg' : panjang <= 120 ? 'kartu-nama-md' : 'kartu-nama-sm'
-        : panjang < 60 ? 'kartu-nama-md' : 'kartu-nama-sm';
-
-    const kelasFontPesan = isSpan2
-        ? panjang < 60 ? 'kartu-isi-lg' : panjang <= 120 ? 'kartu-isi-md' : 'kartu-isi-sm'
-        : panjang < 60 ? 'kartu-isi-md' : 'kartu-isi-sm';
+    const kelasFontNama = tentukanKelasFontNama(pesan.nama, isSpan2);
+    const kelasFontPesan = tentukanKelasFontPesan(teks, isSpan2);
 
     return (
         <motion.div
@@ -75,7 +104,7 @@ function KartuPesanModern({ kartu, isCompact }) {
                 </div>
             </div>
 
-            {/* Isi Pesan */}
+            {/* Isi Pesan dengan font dinamis (besar jika pendek, kecil jika panjang) */}
             <div className="kartu-body-wrap">
                 <p className={`kartu-pesan-text ${kelasFontPesan}`}>
                     "{pesan.isi_pesan}"
@@ -99,6 +128,80 @@ export default function Display({ pesanAwal = [] }) {
     const { kartuAktif, semuaPesan } = useAntreanPesan(pesanAwal);
     const [sidebarTerbuka, setSidebarTerbuka] = useState(false);
     const [kataKunciCari, setKataKunciCari] = useState('');
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    useEffect(() => {
+        function updateFullscreenState() {
+            const isFs = !!(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement ||
+                (window.innerHeight === screen.height && window.innerWidth === screen.width)
+            );
+            setIsFullscreen(isFs);
+        }
+
+        document.addEventListener('fullscreenchange', updateFullscreenState);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenState);
+        document.addEventListener('mozfullscreenchange', updateFullscreenState);
+        document.addEventListener('MSFullscreenChange', updateFullscreenState);
+        window.addEventListener('resize', updateFullscreenState);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', updateFullscreenState);
+            document.removeEventListener('webkitfullscreenchange', updateFullscreenState);
+            document.removeEventListener('mozfullscreenchange', updateFullscreenState);
+            document.removeEventListener('MSFullscreenChange', updateFullscreenState);
+            window.removeEventListener('resize', updateFullscreenState);
+        };
+    }, []);
+
+    async function handleToggleFullscreen() {
+        const doc = document;
+        const docEl = document.documentElement;
+        const isFs = !!(
+            doc.fullscreenElement ||
+            doc.webkitFullscreenElement ||
+            doc.mozFullScreenElement ||
+            doc.msFullscreenElement ||
+            isFullscreen
+        );
+
+        if (!isFs) {
+            try {
+                if (docEl.requestFullscreen) {
+                    await docEl.requestFullscreen();
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen();
+                } else if (docEl.mozRequestFullScreen) {
+                    docEl.mozRequestFullScreen();
+                } else if (docEl.msRequestFullscreen) {
+                    docEl.msRequestFullscreen();
+                }
+                setIsFullscreen(true);
+            } catch (err) {
+                console.warn('Native requestFullscreen diblokir lingkungan browser/iframe:', err);
+                // Fallback mode layar penuh CSS untuk environment embedded/preview
+                setIsFullscreen(true);
+            }
+        } else {
+            try {
+                if (doc.fullscreenElement && doc.exitFullscreen) {
+                    await doc.exitFullscreen();
+                } else if (doc.webkitExitFullscreen) {
+                    doc.webkitExitFullscreen();
+                } else if (doc.mozCancelFullScreen) {
+                    doc.mozCancelFullScreen();
+                } else if (doc.msExitFullscreen) {
+                    doc.msExitFullscreen();
+                }
+            } catch (err) {
+                console.warn('exitFullscreen error:', err);
+            }
+            setIsFullscreen(false);
+        }
+    }
 
     const daftarPesanTersaring = useMemo(() => {
         if (!kataKunciCari.trim()) return semuaPesan;
@@ -111,7 +214,7 @@ export default function Display({ pesanAwal = [] }) {
     }, [semuaPesan, kataKunciCari]);
 
     return (
-        <div className="display-canvas-modern">
+        <div className={`display-canvas-modern ${isFullscreen ? 'mode-layar-penuh' : ''}`}>
             {/* Background lighting accents yang mengisi penuh halaman termasuk lapisan bawah navbar */}
             <div className="light-glow-wrapper" aria-hidden="true">
                 <div className="light-glow-orb light-glow-1" />
@@ -119,12 +222,14 @@ export default function Display({ pesanAwal = [] }) {
                 <div className="light-glow-orb light-glow-3" />
             </div>
 
-            {/* Navbar Global dengan Tombol Toggle Sidebar */}
+            {/* Navbar Global dengan Tombol Toggle Sidebar & Fullscreen */}
             <Navbar
                 jumlahPesan={kartuAktif.length}
                 totalSemuaPesan={semuaPesan.length}
                 sidebarTerbuka={sidebarTerbuka}
                 onToggleSidebar={() => setSidebarTerbuka((s) => !s)}
+                isFullscreen={isFullscreen}
+                onToggleFullscreen={handleToggleFullscreen}
             />
 
             {/* Layout Desktop: Grid Kartu + Sidebar Kanan (disembunyikan di mobile) */}

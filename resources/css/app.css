@@ -841,11 +841,23 @@ html, body, #app {
    ══════════════════════════════════════════════════════════════════════════════ */
 
 .display-canvas-modern {
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow-x: hidden;
+    overflow: hidden;
+}
+
+.display-canvas-modern .navbar-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 clamp(0.75rem, 1.5vw, 1.75rem);
+    margin: 10px auto 0 auto;
+    flex-shrink: 0;
+    position: relative;
+    top: 0;
+    z-index: 60;
 }
 
 /* Sub-Bar Header */
@@ -995,10 +1007,10 @@ html, body, #app {
     display: flex;
     position: relative;
     width: 100%;
-    max-width: 1560px;
-    margin: 0 auto;
-    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
-    gap: 1.25rem;
+    max-width: 100%;
+    margin: 0;
+    padding: clamp(0.9rem, 1.4vw, 1.35rem) clamp(0.75rem, 1.5vw, 1.75rem) clamp(0.75rem, 1.2vw, 1.25rem) clamp(0.75rem, 1.5vw, 1.75rem);
+    gap: clamp(0.75rem, 1.2vw, 1.25rem);
     min-height: 0;
     height: calc(100vh - 84px);
     box-sizing: border-box;
@@ -1007,7 +1019,25 @@ html, body, #app {
 
 .display-content-layout.sidebar-terbuka {
     max-width: 100%;
-    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+    padding: clamp(0.9rem, 1.4vw, 1.35rem) clamp(0.75rem, 1.5vw, 1.75rem) clamp(0.75rem, 1.2vw, 1.25rem) clamp(0.75rem, 1.5vw, 1.75rem);
+}
+
+:fullscreen .display-canvas-modern,
+:-webkit-full-screen .display-canvas-modern,
+.display-canvas-modern.mode-layar-penuh {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 999;
+}
+
+:fullscreen .display-content-layout,
+:-webkit-full-screen .display-content-layout,
+.mode-layar-penuh .display-content-layout {
+    height: calc(100vh - 80px);
+    height: calc(100dvh - 80px);
 }
 
 /* Dynamic Cards Grid (2 Baris x 3 Kolom Pesan = 6 Kartu Maksimal) */
@@ -1019,14 +1049,14 @@ html, body, #app {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
+    gap: clamp(0.75rem, 1.2vw, 1.35rem);
     position: relative;
     z-index: 10;
     transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .display-cards-grid-compact {
-    gap: 0.85rem;
+    gap: 0.75rem;
 }
 
 /* Slot Cell Container: Memberi ruang stabil untuk animasi pergantian pesan bersih */
@@ -1099,12 +1129,13 @@ html, body, #app {
     background: #ffffff;
     border: 3.5px solid #ffffff;
     border-radius: var(--radius-card);
-    padding: 1.35rem 1.45rem 1.15rem 1.45rem;
+    padding: clamp(1rem, 1.4vw, 1.55rem) clamp(1.1rem, 1.6vw, 1.85rem);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     min-width: 0;
     min-height: 0;
+    height: 100%;
     overflow: hidden;
     /* The Clay Box-Shadow Signature: thick bottom shadow + outer bloom + inset 3D specular highlight */
     box-shadow: 
@@ -1138,8 +1169,8 @@ html, body, #app {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
-    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+    margin-top: 0.2rem;
 }
 
 .kartu-author-wrap {
@@ -1150,15 +1181,15 @@ html, body, #app {
 
 /* Avatar: 3D Clay Sphere */
 .kartu-avatar-circle {
-    width: 46px;
-    height: 46px;
+    width: clamp(40px, 3.2vw, 48px);
+    height: clamp(40px, 3.2vw, 48px);
     border-radius: 50%;
     border: 2.5px solid #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Outfit', sans-serif;
-    font-size: 1.25rem;
+    font-size: clamp(1.1rem, 1.3vw, 1.35rem);
     font-weight: 900;
     box-shadow: 
         0 4px 0 0 rgba(0, 0, 0, 0.12),
@@ -1182,12 +1213,12 @@ html, body, #app {
     white-space: nowrap;
 }
 
-.kartu-nama-lg { font-size: 1.2rem; }
-.kartu-nama-md { font-size: 1.05rem; }
-.kartu-nama-sm { font-size: 0.95rem; }
+.kartu-nama-lg { font-size: clamp(1.15rem, 1.4vw, 1.45rem); }
+.kartu-nama-md { font-size: clamp(1rem, 1.2vw, 1.25rem); }
+.kartu-nama-sm { font-size: clamp(0.9rem, 1vw, 1.1rem); }
 
 .kartu-author-role {
-    font-size: 0.78rem;
+    font-size: clamp(0.72rem, 0.85vw, 0.85rem);
     font-weight: 800;
     color: #64748b;
     margin-top: 1px;
@@ -1198,7 +1229,7 @@ html, body, #app {
     flex: 1;
     display: flex;
     align-items: center;
-    margin: 0.4rem 0 0.8rem 0;
+    margin: 0.25rem 0 0.6rem 0;
     min-height: 0;
     overflow: hidden;
 }
@@ -1207,38 +1238,111 @@ html, body, #app {
     font-family: 'Nunito', sans-serif;
     color: #1e293b;
     font-weight: 800;
-    line-height: 1.42;
+    line-height: 1.4;
     word-break: break-word;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 6;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
 }
 
-.kartu-isi-lg {
-    font-size: 1.38rem;
+/* ─── Dynamic Message Body Typography: 5 Tiers with Max & Min Bounds ─── */
+
+/* Tier 1: Sangat Singkat (Batas Maksimal) - <= 20-25 Karakter / Kata Sangat Sedikit */
+.kartu-isi-sangat-singkat {
+    font-size: clamp(1.85rem, 2.5vw, 2.5rem);
+    line-height: 1.22;
+    font-weight: 900;
+    color: #0f172a;
+    -webkit-line-clamp: 3;
+}
+.kartu-span-2 .kartu-isi-sangat-singkat {
+    font-size: clamp(2.2rem, 3.2vw, 3.25rem);
+    line-height: 1.18;
+    -webkit-line-clamp: 3;
+}
+
+/* Tier 2: Singkat - <= 45-55 Karakter */
+.kartu-isi-singkat {
+    font-size: clamp(1.38rem, 1.85vw, 1.85rem);
+    line-height: 1.26;
+    font-weight: 900;
+    color: #0f172a;
+    -webkit-line-clamp: 4;
+}
+.kartu-span-2 .kartu-isi-singkat {
+    font-size: clamp(1.75rem, 2.35vw, 2.45rem);
+    line-height: 1.24;
+    -webkit-line-clamp: 4;
+}
+
+/* Tier 3: Sedang - <= 80-95 Karakter */
+.kartu-isi-sedang {
+    font-size: clamp(1.15rem, 1.45vw, 1.45rem);
+    line-height: 1.34;
+    font-weight: 800;
+    color: #1e293b;
+    -webkit-line-clamp: 5;
+}
+.kartu-span-2 .kartu-isi-sedang {
+    font-size: clamp(1.38rem, 1.85vw, 1.88rem);
     line-height: 1.32;
+    -webkit-line-clamp: 5;
+}
+
+/* Tier 4: Panjang - <= 130-145 Karakter */
+.kartu-isi-panjang {
+    font-size: clamp(1.0rem, 1.2vw, 1.22rem);
+    line-height: 1.38;
+    font-weight: 800;
+    color: #1e293b;
+    -webkit-line-clamp: 6;
+}
+.kartu-span-2 .kartu-isi-panjang {
+    font-size: clamp(1.16rem, 1.4vw, 1.42rem);
+    line-height: 1.36;
+    -webkit-line-clamp: 6;
+}
+
+/* Tier 5: Sangat Panjang (Batas Minimal) - > 130-145 Karakter */
+.kartu-isi-sangat-panjang {
+    font-size: clamp(0.92rem, 1.05vw, 1.05rem);
+    line-height: 1.42;
+    font-weight: 700;
+    color: #1e293b;
+    -webkit-line-clamp: 7;
+}
+.kartu-span-2 .kartu-isi-sangat-panjang {
+    font-size: clamp(1.02rem, 1.2vw, 1.2rem);
+    line-height: 1.4;
+    -webkit-line-clamp: 7;
+}
+
+/* Backward compatibility fallback classes */
+.kartu-isi-lg {
+    font-size: clamp(1.38rem, 1.85vw, 1.85rem);
+    line-height: 1.28;
     font-weight: 900;
     color: #0f172a;
 }
 
 .kartu-isi-md {
-    font-size: 1.15rem;
-    line-height: 1.38;
+    font-size: clamp(1.15rem, 1.45vw, 1.45rem);
+    line-height: 1.34;
     font-weight: 800;
 }
 
 .kartu-isi-sm {
-    font-size: 1rem;
-    line-height: 1.42;
+    font-size: clamp(0.95rem, 1.15vw, 1.2rem);
+    line-height: 1.4;
     font-weight: 700;
 }
 
 /* Penyesuaian Kolom Variatif: Span 1 (Sedang) vs Span 2 (Lebar) */
 .kartu-span-1 {
-    padding: 1.2rem 1.15rem 1rem 1.15rem;
+    padding: clamp(0.9rem, 1.2vw, 1.35rem) clamp(1rem, 1.35vw, 1.5rem);
 }
 
 .kartu-span-1 .kartu-author-wrap {
@@ -1252,16 +1356,6 @@ html, body, #app {
 
 .kartu-span-1 .kartu-author-name {
     max-width: 135px;
-}
-
-.kartu-span-1 .kartu-pesan-text {
-    font-size: 1.05rem;
-    line-height: 1.38;
-    -webkit-line-clamp: 4;
-}
-
-.kartu-span-2 .kartu-pesan-text {
-    -webkit-line-clamp: 5;
 }
 
 /* Card Footer */
@@ -1328,6 +1422,52 @@ html, body, #app {
 .kartu-compact .kartu-nama-md { font-size: 0.92rem !important; }
 .kartu-compact .kartu-nama-sm { font-size: 0.82rem !important; }
 
+/* Compact 5-tier typography */
+.kartu-compact .kartu-isi-sangat-singkat {
+    font-size: clamp(1.5rem, 2.0vw, 2.05rem) !important;
+    line-height: 1.22 !important;
+}
+.kartu-compact.kartu-span-2 .kartu-isi-sangat-singkat {
+    font-size: clamp(1.85rem, 2.5vw, 2.55rem) !important;
+    line-height: 1.2 !important;
+}
+
+.kartu-compact .kartu-isi-singkat {
+    font-size: clamp(1.2rem, 1.55vw, 1.55rem) !important;
+    line-height: 1.26 !important;
+}
+.kartu-compact.kartu-span-2 .kartu-isi-singkat {
+    font-size: clamp(1.45rem, 2.0vw, 2.05rem) !important;
+    line-height: 1.24 !important;
+}
+
+.kartu-compact .kartu-isi-sedang {
+    font-size: clamp(1.02rem, 1.25vw, 1.28rem) !important;
+    line-height: 1.32 !important;
+}
+.kartu-compact.kartu-span-2 .kartu-isi-sedang {
+    font-size: clamp(1.2rem, 1.55vw, 1.58rem) !important;
+    line-height: 1.3 !important;
+}
+
+.kartu-compact .kartu-isi-panjang {
+    font-size: clamp(0.92rem, 1.08vw, 1.08rem) !important;
+    line-height: 1.36 !important;
+}
+.kartu-compact.kartu-span-2 .kartu-isi-panjang {
+    font-size: clamp(1.05rem, 1.25vw, 1.25rem) !important;
+    line-height: 1.35 !important;
+}
+
+.kartu-compact .kartu-isi-sangat-panjang {
+    font-size: clamp(0.85rem, 0.98vw, 0.98rem) !important;
+    line-height: 1.38 !important;
+}
+.kartu-compact.kartu-span-2 .kartu-isi-sangat-panjang {
+    font-size: clamp(0.95rem, 1.1vw, 1.1rem) !important;
+    line-height: 1.38 !important;
+}
+
 .kartu-compact .kartu-isi-lg { font-size: 1.15rem !important; line-height: 1.3 !important; }
 .kartu-compact .kartu-isi-md { font-size: 1rem !important; line-height: 1.35 !important; }
 .kartu-compact .kartu-isi-sm { font-size: 0.88rem !important; line-height: 1.38 !important; }
@@ -1337,12 +1477,11 @@ html, body, #app {
 }
 
 .kartu-compact.kartu-span-1 .kartu-pesan-text {
-    -webkit-line-clamp: 3 !important;
-    font-size: 0.95rem !important;
+    -webkit-line-clamp: 4 !important;
 }
 
 .kartu-compact.kartu-span-2 .kartu-pesan-text {
-    -webkit-line-clamp: 4 !important;
+    -webkit-line-clamp: 5 !important;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -1817,6 +1956,19 @@ html, body, #app {
     }
 
     /* 4. Display Page di Mobile: Tampilkan list semua pesan, sembunyikan grid proyektor desktop */
+    .display-canvas-modern {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden !important;
+    }
+
+    .navbar-container {
+        top: 8px;
+        padding: 0 8px;
+        margin: 8px auto 0 auto;
+        flex-shrink: 0;
+    }
+
     .display-desktop-layout {
         display: none !important;
     }
@@ -1825,6 +1977,45 @@ html, body, #app {
     }
     .display-mobile-feed {
         display: flex !important;
+        flex: 1;
+        min-height: 0;
+        height: calc(100dvh - 68px);
+        margin: 0 auto;
+        padding: 0.5rem 0.85rem 0.5rem 0.85rem;
+        gap: 0.75rem;
+        overflow: hidden;
+    }
+
+    .mobile-feed-header {
+        flex-shrink: 0;
+        padding: 0.9rem 1.1rem;
+        border-radius: 20px;
+        box-shadow: 
+            0 6px 0 0 #cbd5e1,
+            0 10px 16px rgba(0, 0, 0, 0.05),
+            inset 0 3px 4px #ffffff;
+    }
+
+    .mobile-messages-stream {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding: 0.25rem 0.25rem 1.75rem 0.25rem;
+        gap: 0.75rem;
+    }
+
+    .mobile-messages-stream::-webkit-scrollbar {
+        width: 5px;
+    }
+    .mobile-messages-stream::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .mobile-messages-stream::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.4);
+        border-radius: 10px;
     }
 
     .kirim-card-modern {
@@ -1842,10 +2033,8 @@ html, body, #app {
     width: 100%;
     max-width: 680px;
     margin: 0 auto;
-    padding: 1rem 1rem 3rem 1rem;
     position: relative;
     z-index: 10;
-    gap: 1rem;
 }
 
 .mobile-feed-header {
