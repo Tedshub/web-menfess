@@ -69,6 +69,23 @@ class PesanTest extends TestCase
         ]);
     }
 
+    public function test_kata_kasar_tersensor_disimpan_dengan_disetujui_false(): void
+    {
+        $response = $this->post('/kirim', [
+            'nama' => 'User Iseng',
+            'isi_pesan' => 'Selamat wisuda g*blok',
+        ]);
+
+        $response->assertSessionHas('sukses', true);
+        $response->assertSessionHas('disetujui', false);
+
+        $this->assertDatabaseHas('pesan', [
+            'nama' => 'User Iseng',
+            'isi_pesan' => 'Selamat wisuda g*blok',
+            'disetujui' => false,
+        ]);
+    }
+
     public function test_rate_limit_per_perangkat_maksimal_3_pesan_per_menit(): void
     {
         $cookie = ['_pmw_token' => 'token-test-123'];
