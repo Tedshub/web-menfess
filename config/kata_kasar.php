@@ -28,10 +28,10 @@ return [
         'ngentot',
         'pantek', 'pecun', 'perek', 'puki', 'puqi', 'pukimak', 'puqimak',
         'setan', 'sialan', 'sinting',
-        'tai', 'taik', 'tempek', 'tuempekk', 'tempekkkk', 'tolol',
+        'tai', 'taik', 'tempek', 'tuempek', tuempekk', 'tempekkkk', 'tolol',
         'titit', 'yatim',
         'ugal',
-        'wedhus',
+        'wedhus', 'ireng', 'iwa', 'kuontol', 'kuontoll', 
 
         // Bahasa Inggris - kata kasar umum
         'asshole', 'ass',
