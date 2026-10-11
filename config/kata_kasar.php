@@ -28,7 +28,7 @@ return [
         'ngentot',
         'pantek', 'pecun', 'perek', 'puki', 'puqi', 'pukimak', 'puqimak',
         'setan', 'sialan', 'sinting',
-        'tai', 'taik', 'tempek', 'tuempek', tuempekk', 'tempekkkk', 'tolol',
+        'tai', 'taik', 'tempek', 'tuempek', 'tuempekk', 'tempekkkk', 'tolol',
         'titit', 'yatim',
         'ugal',
         'wedhus', 'ireng', 'iwa', 'kuontol', 'kuontoll', 
